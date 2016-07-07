@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=320, initial-scale=1">
+  <script src="https://yastatic.net/jquery/2.2.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
   <title>Книга пяти колец</title>
   <style>
     html, body, div, span, object, iframe,
@@ -216,5 +218,62 @@
   <p>Второй год Сёхо (1645), пятый месяц, двенадцатый день.<br />
   Тэруо Магонодзё Синмэн Мусаси</p>
 </section>
+
+<script>
+  (function() {
+    var titles = [];
+    var triggers = [];
+
+    function collectTitlesAndTriggers() {
+      var scrollTop = window.pageYOffset;
+      $('header, section').each(function() {
+        var $section = $(this);
+        var $header = $section.find('h1, h2, h3').first();
+        var rect = $section[0].getBoundingClientRect();
+
+        triggers.push({ top: scrollTop + rect.top, bottom: scrollTop + rect.bottom });
+        titles.push($header.text());
+      });
+    }
+
+    function updateWindowTitle() {
+      var scrollTop = window.pageYOffset;
+      var windowHeight = window.innerHeight;
+
+      var newTitle;
+      var currentDistance;
+      var minDistance = 99999;
+
+      titles.forEach(function(title, index) {
+        var fromTop = Math.abs(triggers[index].top - scrollTop);
+        var fromBottom = Math.abs(triggers[index].bottom - scrollTop - windowHeight);
+        var currentDistance = Math.min(fromTop, fromBottom);
+
+        if (currentDistance < minDistance) {
+          minDistance = currentDistance;
+          newTitle = title;
+        }
+      });
+
+      if (newTitle) document.title = newTitle;
+    }
+
+    function rememberCurrentPosition() {
+      $.cookie('position', window.pageYOffset);
+    }
+
+    function restorePosition() {
+      var position = parseInt($.cookie('position'), 10);
+
+      if (position) $('document, body').scrollTop(position);
+    }
+
+    collectTitlesAndTriggers();
+    restorePosition();
+
+    $(document).on('scroll', updateWindowTitle);
+    setInterval(rememberCurrentPosition, 400);
+  })();
+</script>
 </body>
 </html>
