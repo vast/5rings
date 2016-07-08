@@ -89,14 +89,14 @@
     .bookmark {
       position: absolute;
       top: 0;
-      left: -1.5em;
-      width: 1.5em;
+      left: -1.8em;
+      width: 1.8em;
       text-align: center;
-      opacity: .4;
+      opacity: .2;
       cursor: pointer;
     }
 
-    p:hover .bookmark {
+    p:hover .bookmark, p.is-bookmarked .bookmark {
       opacity: 1;
     }
 
@@ -299,9 +299,9 @@
       $('p').each(function(index, el) {
         var $paragraph = $(el);
         var paragraphId = 'para-' + index;
-        var $bookmark = $('<span/>', { text: '🔖', class: 'bookmark' })
+        var $bookmark = $('<span/>', { text: '☆', class: 'bookmark' })
         $bookmark.on('click', function() {
-          if ($.cookie(paragraphId)) {
+          if ($.cookie(paragraphId) || $paragraph.is('.is-bookmarked')) {
             $.removeCookie(paragraphId);
             $paragraph.removeClass('is-bookmarked');
           } else {
