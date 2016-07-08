@@ -84,6 +84,33 @@
 
     header {margin-top: 4em; text-align: center;}
 
+    p { position: relative; }
+
+    .bookmark {
+      position: absolute;
+      top: 0;
+      left: -1.5em;
+      width: 1.5em;
+      text-align: center;
+      opacity: .4;
+      cursor: pointer;
+    }
+
+    p:hover .bookmark {
+      opacity: 1;
+    }
+
+    p.is-bookmarked:after {
+      position: absolute;
+      content: '';
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      background: #f9f5e4;
+      z-index: -1;
+    }
+
     @media screen and (max-width: 640px) {
       header { margin-top: 2em; }
       h1 { font-size: 36px; }
@@ -268,8 +295,32 @@
       if (position) $('document, body').scrollTop(position);
     }
 
+    function processBookmarks() {
+      $('p').each(function(index, el) {
+        var $paragraph = $(el);
+        var paragraphId = 'para-' + index;
+        var $bookmark = $('<span/>', { text: '🔖', class: 'bookmark' })
+        $bookmark.on('click', function() {
+          if ($.cookie(paragraphId)) {
+            $.removeCookie(paragraphId);
+            $paragraph.removeClass('is-bookmarked');
+          } else {
+            $.cookie(paragraphId, 1);
+            $paragraph.addClass('is-bookmarked');
+          }
+        });
+
+        $paragraph
+          .attr('id', paragraphId)
+          .prepend($bookmark);
+
+        if ($.cookie(paragraphId)) $paragraph.addClass('is-bookmarked');
+      });
+    }
+
     collectTitlesAndTriggers();
     restorePosition();
+    processBookmarks();
 
     $(document).on('scroll', updateWindowTitle);
     setInterval(rememberCurrentPosition, 400);
