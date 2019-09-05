@@ -286,7 +286,7 @@
     }
 
     function rememberCurrentPosition() {
-      $.cookie('position', window.pageYOffset);
+      $.cookie('position', window.pageYOffset, { expires: 7 });
     }
 
     function restorePosition() {
