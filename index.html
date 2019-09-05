@@ -290,10 +290,9 @@
     }
 
     function restorePosition() {
-      console.log('#restorePosition', $.cookie('position'))
       var position = parseInt($.cookie('position'), 10);
 
-      if (position) $('document, body').scrollTop(position);
+      if (position) window.scroll(0, position);
     }
 
     function processBookmarks() {
